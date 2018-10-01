@@ -1,0 +1,18 @@
+{
+  "name": "overpass-diff-publisher",
+  "version": "1.0.0",
+  "description": "This uses Overpass to generate augmented diffs and publishes them to S3 for use by the tile updater.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Seth Fitzsimmons <seth@mojodna.net>",
+  "license": "ISC",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "epipebomb": "^1.0.0",
+    "highland": "^2.13.0",
+    "osm-replication-streams": "^0.6.5",
+    "yaml": "^1.0.0-rc.7"
+  }
+}
