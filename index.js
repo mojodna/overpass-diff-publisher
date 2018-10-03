@@ -64,7 +64,7 @@ const getCurrentSequence = async u => {
           path.resolve(prefix, "state.yaml")
         )).toString()
       );
-      return state.sequence;
+      return state.sequence + 1;
 
     case "s3:":
       const obj = await S3.getObject({
@@ -72,7 +72,7 @@ const getCurrentSequence = async u => {
         Key: uri.path.slice(1) + "state.yaml"
       }).promise();
 
-      return YAML.parse(obj.Body.toString()).sequence;
+      return YAML.parse(obj.Body.toString()).sequence + 1;
 
     default:
       throw new Error(`Unsupported protocol: ${uri.protocol}`);
