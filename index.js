@@ -170,63 +170,64 @@ async function main() {
   };
 
   const processor = new AugmentedDiffParser().on("error", console.warn);
-
   const extractor = new ExtractionStream();
 
-  _(
-    AugmentedDiffs({
-      baseURL: process.env.OVERPASS_URL,
-      infinite: true,
-      initialSequence
-    })
-      .pipe(processor)
-      .pipe(extractor)
-  )
-    // batch by sequence
-    .through(s => {
-      let batched = [];
-      let sequence = null;
+  return new Promise((resolve, reject) => {
+    _(
+      AugmentedDiffs({
+        baseURL: process.env.OVERPASS_URL,
+        infinite: true,
+        initialSequence
+      })
+        .pipe(processor)
+        .pipe(extractor)
+    )
+      // batch by sequence
+      .through(s => {
+        let batched = [];
+        let sequence = null;
 
-      return s.consume((err, x, push, next) => {
-        if (err) {
-          push(err);
-          return next();
-        }
-
-        if (x === _.nil) {
-          // end of the stream; flush
-          if (batched.length > 0) {
-            push(null, [sequence, batched]);
+        return s.consume((err, x, push, next) => {
+          if (err) {
+            push(err);
+            return next();
           }
 
-          return push(null, _.nil);
-        }
-
-        if (x.type === "Marker") {
-          if (x.properties.status === "start") {
-            sequence = Number(x.properties.sequenceNumber);
-          }
-
-          if (x.properties.status === "end") {
-            // new sequence; flush previous
+          if (x === _.nil) {
+            // end of the stream; flush
             if (batched.length > 0) {
               push(null, [sequence, batched]);
             }
 
-            // reset batch
-            batched = [];
+            return push(null, _.nil);
           }
-        } else {
-          // add this item to the batch
-          batched.push(x);
-        }
 
-        return next();
-      });
-    })
-    .flatMap(_.wrapCallback(writer(targetURI)))
-    .errors(err => console.warn(err.stack))
-    .done(() => console.log("Done"));
+          if (x.type === "Marker") {
+            if (x.properties.status === "start") {
+              sequence = Number(x.properties.sequenceNumber);
+            }
+
+            if (x.properties.status === "end") {
+              // new sequence; flush previous
+              if (batched.length > 0) {
+                push(null, [sequence, batched]);
+              }
+
+              // reset batch
+              batched = [];
+            }
+          } else {
+            // add this item to the batch
+            batched.push(x);
+          }
+
+          return next();
+        });
+      })
+      .flatMap(_.wrapCallback(writer(targetURI)))
+      .errors(reject)
+      .done(resolve);
+  });
 }
 
 main()
