@@ -117,9 +117,6 @@ async function main() {
     initialSequence = await getCurrentSequence(targetURI);
   }
 
-  console.log(initialSequence);
-  process.exit();
-
   const writer = targetURI => async ([sequence, batch], callback) => {
     console.log(
       `${sequence} (${sequenceToTimestamp(sequence).toISOString()}): ${
