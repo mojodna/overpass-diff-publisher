@@ -2,7 +2,6 @@
 require("epipebomb")();
 require("babel-polyfill");
 
-const fs = require("fs");
 const path = require("path");
 const { Transform } = require("stream");
 const url = require("url");
@@ -11,9 +10,9 @@ const { promisify } = require("util");
 const _ = require("highland");
 const AWS = require("aws-sdk");
 const commandLineArgs = require("command-line-args");
+const fs = require("fs-extra");
 const YAML = require("yaml").default;
 
-const writeFileAsync = promisify(fs.writeFile);
 
 const {
   parsers: { AugmentedDiffParser },
@@ -155,9 +154,9 @@ async function main() {
         const prefix = uri.host + uri.path;
 
         try {
-          await writeFileAsync(path.resolve(prefix, `${sequence}.json`), body);
+          await fs.writeFile(path.resolve(prefix, `${sequence}.json`), body);
 
-          await writeFileAsync(path.resolve(prefix, "state.yaml"), state);
+          await fs.writeFile(path.resolve(prefix, "state.yaml"), state);
         } catch (err) {
           return callback(err);
         }

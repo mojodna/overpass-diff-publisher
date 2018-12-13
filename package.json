@@ -12,6 +12,7 @@
     "babel-polyfill": "^6.26.0",
     "command-line-args": "^5.0.2",
     "epipebomb": "^1.0.0",
+    "fs-extra": "^7.0.1",
     "highland": "^2.13.0",
     "osm-replication-streams": "^0.6.5",
     "yaml": "^1.0.0-rc.7"
