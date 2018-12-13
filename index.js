@@ -136,13 +136,15 @@ async function main() {
           await S3.putObject({
             Body: body,
             Bucket: uri.host,
-            Key: uri.path.slice(1) + `${sequence}.json`
+            Key: uri.path.slice(1) + `${sequence}.json`,
+            ContentType: "application/json"
           }).promise();
 
           await S3.putObject({
             Body: state,
             Bucket: uri.host,
-            Key: uri.path.slice(1) + "state.yaml"
+            Key: uri.path.slice(1) + "state.yaml",
+            ContentType: "application/vnd.yaml"
           }).promise();
         } catch (err) {
           return callback(err);
