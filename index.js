@@ -6,6 +6,7 @@ const path = require("path");
 const { Transform } = require("stream");
 const url = require("url");
 const { promisify } = require("util");
+const zlib = require("zlib");
 
 const _ = require("highland");
 const AWS = require("aws-sdk");
@@ -13,6 +14,7 @@ const commandLineArgs = require("command-line-args");
 const fs = require("fs-extra");
 const YAML = require("yaml").default;
 
+const gzip = promisify(zlib.gzip);
 
 const {
   parsers: { AugmentedDiffParser },
@@ -130,13 +132,25 @@ async function main() {
       sequence
     });
 
+    const s = sequence.toString().padStart(9, 0);
+    const sequencePath = `${s.slice(0, 3)}/${s.slice(3, 6)}/${s.slice(6, 9)}`;
+
     switch (uri.protocol) {
       case "s3:":
         try {
+          // TODO remove me once clients are all using compressed diffs
           await S3.putObject({
             Body: body,
             Bucket: uri.host,
             Key: uri.path.slice(1) + `${sequence}.json`,
+            ContentType: "application/json"
+          }).promise();
+
+          await S3.putObject({
+            Body: await gzip(body),
+            Bucket: uri.host,
+            Key: uri.path.slice(1) + `${sequencePath}.json`,
+            ContentEncoding: "gzip",
             ContentType: "application/json"
           }).promise();
 
@@ -156,8 +170,11 @@ async function main() {
         const prefix = uri.host + uri.path;
 
         try {
+          // TODO remove me once clients are all using compressed diffs
           await fs.writeFile(path.resolve(prefix, `${sequence}.json`), body);
 
+          await fs.mkdirs(path.resolve(prefix, path.dirname(sequencePath)));
+          await fs.writeFile(path.resolve(prefix, `${sequencePath}.json.gz`), await gzip(body));
           await fs.writeFile(path.resolve(prefix, "state.yaml"), state);
         } catch (err) {
           return callback(err);
