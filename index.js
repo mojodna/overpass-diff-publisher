@@ -149,7 +149,7 @@ async function main() {
           await S3.putObject({
             Body: await gzip(body),
             Bucket: uri.host,
-            Key: uri.path.slice(1) + `${sequencePath}.json`,
+            Key: uri.path.slice(1) + `${sequencePath}.json.gz`,
             ContentEncoding: "gzip",
             ContentType: "application/json"
           }).promise();
