@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 require("epipebomb")();
 require("babel-polyfill");
+require("core-js/features/array/flat");
 
 const path = require("path");
 const { Transform } = require("stream");
@@ -174,7 +175,10 @@ async function main() {
           await fs.writeFile(path.resolve(prefix, `${sequence}.json`), body);
 
           await fs.mkdirs(path.resolve(prefix, path.dirname(sequencePath)));
-          await fs.writeFile(path.resolve(prefix, `${sequencePath}.json.gz`), await gzip(body));
+          await fs.writeFile(
+            path.resolve(prefix, `${sequencePath}.json.gz`),
+            await gzip(body)
+          );
           await fs.writeFile(path.resolve(prefix, "state.yaml"), state);
         } catch (err) {
           return callback(err);
