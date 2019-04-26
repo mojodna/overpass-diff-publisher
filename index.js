@@ -83,7 +83,8 @@ const getCurrentSequence = async u => {
 
 /**
  * Consumes GeoJSON FeatureCollection representations of elements within
- * augmented diffs and outputs only the new versions.
+ * augmented diffs and updates the visible property based on the action
+ * that produced them.
  */
 class ExtractionStream extends Transform {
   constructor() {
