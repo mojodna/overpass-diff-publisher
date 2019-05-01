@@ -35,7 +35,7 @@ const optionDefinitions = [
     alias: "i",
     type: Number
   },
-  { name: "timestamp", alias: "t", type: Date },
+  { name: "timestamp", alias: "t", type: String },
   { name: "help", alias: "h", type: Boolean },
   { name: "target", defaultOption: true }
 ];
@@ -114,8 +114,10 @@ async function main() {
   const targetURI = options.target || "file://./";
   let initialSequence;
 
-  if (options.initialSequence || options.timestamp) {
-    initialSequence = options.initialSequence || options.timestamp;
+  if (options.initialSequence) {
+    initialSequence = options.initialSequence;
+  } else if (options.timestamp) {
+    initialSequence = timestampToSequence(options.timestamp);
   } else {
     initialSequence = await getCurrentSequence(targetURI);
   }
