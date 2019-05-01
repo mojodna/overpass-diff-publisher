@@ -13,7 +13,7 @@ const _ = require("highland");
 const AWS = require("aws-sdk");
 const commandLineArgs = require("command-line-args");
 const fs = require("fs-extra");
-const YAML = require("yaml").default;
+const YAML = require("yaml");
 
 const gzip = promisify(zlib.gzip);
 
