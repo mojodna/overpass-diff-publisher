@@ -142,14 +142,6 @@ async function main() {
     switch (uri.protocol) {
       case "s3:":
         try {
-          // TODO remove me once clients are all using compressed diffs
-          await S3.putObject({
-            Body: body,
-            Bucket: uri.host,
-            Key: uri.path.slice(1) + `${sequence}.json`,
-            ContentType: "application/json"
-          }).promise();
-
           await S3.putObject({
             Body: await gzip(body),
             Bucket: uri.host,
@@ -174,9 +166,6 @@ async function main() {
         const prefix = uri.host + uri.path;
 
         try {
-          // TODO remove me once clients are all using compressed diffs
-          await fs.writeFile(path.resolve(prefix, `${sequence}.json`), body);
-
           await fs.mkdirs(path.resolve(prefix, path.dirname(sequencePath)));
           await fs.writeFile(
             path.resolve(prefix, `${sequencePath}.json.gz`),
