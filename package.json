@@ -16,7 +16,7 @@
     "epipebomb": "^1.0.0",
     "fs-extra": "^8.0.1",
     "highland": "^2.13.4",
-    "osm-replication-streams": "^0.7.1",
+    "osm-replication-streams": "^0.7.2",
     "yaml": "^1.6.0"
   }
 }
