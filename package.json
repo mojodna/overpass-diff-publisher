@@ -1,7 +1,7 @@
 {
   "name": "overpass-diff-publisher",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "This uses Overpass to generate augmented diffs and publishes them to S3 for use by the tile updater.",
   "main": "index.js",
   "scripts": {
